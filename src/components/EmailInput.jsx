@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-function EmailInput({ register, error, label, placeholder }) {
+function EmailInput({ register, error }) {
 
     return (
         <>

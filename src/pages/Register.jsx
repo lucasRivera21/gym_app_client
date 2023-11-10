@@ -21,14 +21,15 @@ const schema = yup.object({
 function Register() {
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
 
-    const [sending, setsending] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
 
     const navigate = useNavigate();
 
+    //send data to api
     const onSubmit = async data => {
-        setsending(true)
-
+        setLoading(true)
+        console.log(data)
         const userWeight = {}
         userWeight.weight = parseFloat(data.weight)
         userWeight.magnitude = data.magnitude
@@ -44,12 +45,12 @@ function Register() {
             setError(false)
         } else {
             setError(true)
-            setsending(false)
+            setLoading(false)
         }
 
         if (res.id) {
             await fetch(`http://127.0.0.1:8000/weights/${res.id}`, { method: 'POST', body: JSON.stringify(userWeight), headers: { 'Content-Type': 'application/json' } })
-            setsending(false)
+            setLoading(false)
             setError(false)
             navigate("/login")
         }
@@ -57,7 +58,7 @@ function Register() {
 
     return (
         <div className='h-screen w-screen flex items-center justify-center'>
-            <div className='max-w-xs mx-auto '>
+            <div className='max-w-xs h-auto'>
                 <h1 className="text-[2.5rem] font-bold mb-16">Crea una Cuenta</h1>
 
                 <form className='grid grid-cols-2' onSubmit={handleSubmit(onSubmit)}>
@@ -95,7 +96,7 @@ function Register() {
 
                     {/*SEND BUTTON */}
                     <div className='col-span-full flex py-5'>
-                        <ButtonViolet text={'Registrarse'} sending={sending} />
+                        <ButtonViolet text={'Registrarse'} loading={loading} />
 
                     </div>
 

@@ -1,12 +1,13 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react'
+import { json, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 
 import PasswordInput from '../components/PasswordInput';
-import TextInput from '../components/EmailInput';
+import EmailInput from '../components/EmailInput';
 import ButtonViolet from '../components/ButtonViolet';
+import Alert from '../components/Alert';
 
 const schema = yup.object({
   email: yup.string().email("Correo inválido").required("Campo requerido"),
@@ -15,13 +16,35 @@ const schema = yup.object({
 })
 
 function Login() {
+  const [loading, setLoading] = useState(false)
+  const [errorInput, setErrorInput] = useState(false)
 
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
   const navigate = useNavigate();
 
   //Data from form
-  const onSubmit = data => console.log(data);
+  const onSubmit = async data => {
+    setLoading(true)
+    const res = await fetch('http://127.0.0.1:8000/login/', {
+      method: 'POST', body: new URLSearchParams({
+        username: data.email,
+        password: data.password,
+      }), headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    })
+    if (res.status == 200) {
+      setErrorInput(false)
+      console.log(await res.json())
+    } else if (res.status == 404 || res.status == 400) {
+      setErrorInput(true)
+      console.log(errorInput)
+    } else {
+      console.log("error")
+    }
 
+    setLoading(false)
+
+
+  }
 
   return (
     <div className=' w-screen h-screen flex justify-center items-center'>
@@ -34,18 +57,25 @@ function Login() {
         </h1>
 
         {/*FORM */}
-        <form onSubmit={handleSubmit(onSubmit)} className='grid mb-7'>
+        <form onSubmit={handleSubmit(onSubmit)} className='grid'>
+
+          {/*ALERT */}
+          {errorInput ? <Alert /> : null}
 
           {/*EMAIL INPUT */}
-          <TextInput register={register} error={errors.email?.message} label={'Email'} placeholder={"Ingrese su correo"} />
+          <div className='mb-4'>
+            <EmailInput register={register} error={errors.email?.message} placeholder={"Ingrese su correo"} />
+          </div>
 
           {/*PASSWORD INPUT */}
-          <PasswordInput register={register} error={errors.password?.message} label={'Contraseña'} />
-
+          <div className='mb-4'>
+            <PasswordInput register={register} error={errors.password?.message} label={'Contraseña'} />
+          </div>
 
           {/*SEND BUTTON */}
-          {/*<button type="submit" className='font-semibold text-base bg-violet p-4 rounded-md text-white w-auto mx-auto hover:opacity-80 mt-7'>Entrar</button> */}
-          <ButtonViolet text={'Entrar'} />
+          <div className='flex py-4'>
+            <ButtonViolet text={'Entrar'} loading={loading} />
+          </div>
         </form>
 
         {/*FORGOT PASSWORD LINK*/}
