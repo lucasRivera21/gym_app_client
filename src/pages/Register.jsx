@@ -14,7 +14,7 @@ const schema = yup.object({
     email: yup.string().email("Correo inválido").required("Campo requerido"),
     password: yup.string().required("Campo requerido"),
     name: yup.string().required("Campo requerido"),
-    weight: yup.string().required("Campo requerido"),
+    weight: yup.number().typeError('Solo números').required("Campo requerido").min(10, "Peso inválido"),
     gender: yup.string().required("Campo requerido")
 })
 
@@ -57,41 +57,41 @@ function Register() {
     }
 
     return (
-        <div className='h-screen w-screen flex items-center justify-center'>
-            <div className='max-w-xs h-auto'>
-                <h1 className="text-[2.5rem] font-bold mb-16">Crea una Cuenta</h1>
+        <div className='h-screen w-full flex items-center justify-center p-2 sm:bg-violet'>
+            <div className=' h-auto sm:bg-white sm:py-5 sm:rounded-md sm:w-4/5 max-w-2xl sm:px-6'>
+                <h1 className="text-[2.5rem] font-bold mb-7 sm:text-center">Crea una Cuenta</h1>
 
-                <form className='grid grid-cols-2' onSubmit={handleSubmit(onSubmit)}>
+                <form className='grid grid-cols-2 sm:grid-cols-4 sm:gap-x-5  max-sm:max-w-xs p-2' onSubmit={handleSubmit(onSubmit)}>
 
                     {/*NAME INPUT*/}
-                    <div className='col-span-full'>
+                    <div className='col-span-full max-w-xs sm:col-span-2 '>
                         <TextInput register={register} error={errors.name?.message} />
                     </div>
 
                     {/*WEIGHT INPUT*/}
-                    <div className='mb-4 '>
+                    <div className='mb-4'>
                         <WeightInput register={register} error={errors.weight?.message} />
                     </div>
 
                     {/*GENDER INPUT*/}
-                    <div>
+                    <div className='w-fit'>
                         <GenderInput register={register} error={errors.gender?.message} />
                     </div>
 
                     {/*EMAIL INPUT*/}
-                    <div className='col-span-full mb-4'>
+                    <div className='col-span-full mb-4 max-w-xs sm:col-span-2'>
                         <EmailInput register={register} error={errors.email?.message} />
                         {error ? <span className='text-red-500 text-sm block'>Este email ya existe</span> : null}
                     </div>
 
                     {/*PASSWORD INPUT*/}
-                    <div className='col-span-full mb-4'>
+                    <div className='col-span-full mb-4 max-w-xs sm:col-span-2' >
                         <PasswordInput register={register} error={errors.password?.message} label={'Contraseña'} />
                     </div>
 
                     {/*TERMS AND CONDITIONS */}
                     <div className='col-span-full'>
-                        <p className='text-sm font-normal text-gray-500'>Al registrarte aceptas los <a className='underline cursor-pointer'>Términos y Condiciones</a> de uso</p>
+                        <p className='text-sm font-normal text-gray-500 sm:text-center'>Al registrarte aceptas los <a className='underline cursor-pointer'>Términos y Condiciones</a> de uso</p>
                     </div>
 
                     {/*SEND BUTTON */}
