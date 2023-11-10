@@ -47,28 +47,28 @@ function Login() {
   }
 
   return (
-    <div className=' w-screen h-screen flex justify-center items-center'>
+    <div className=' w-screen h-screen flex justify-center items-center sm:bg-violet'>
 
-      <div className="max-w-xs  h-auto ">
+      <div className="w-80 h-auto sm:bg-white sm:rounded-md sm:w-[28rem] sm:py-4">
 
         {/*TITLE */}
-        <h1 className="text-[2.5rem] font-bold mb-20">
+        <h1 className="text-[2.5rem] font-bold mb-20 sm:text-center">
           Entra a tu Cuenta
         </h1>
 
         {/*FORM */}
-        <form onSubmit={handleSubmit(onSubmit)} className='grid'>
+        <form onSubmit={handleSubmit(onSubmit)} className='grid max-w-xs  mx-auto'>
 
           {/*ALERT */}
           {errorInput ? <Alert /> : null}
 
           {/*EMAIL INPUT */}
-          <div className='mb-4'>
+          <div className='mb-4 max-w-xs'>
             <EmailInput register={register} error={errors.email?.message} placeholder={"Ingrese su correo"} />
           </div>
 
           {/*PASSWORD INPUT */}
-          <div className='mb-4'>
+          <div className='mb-4 max-w-xs'>
             <PasswordInput register={register} error={errors.password?.message} label={'Contraseña'} />
           </div>
 
