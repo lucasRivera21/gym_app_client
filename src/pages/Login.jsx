@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { json, useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
@@ -9,13 +9,20 @@ import EmailInput from '../components/EmailInput';
 import ButtonViolet from '../components/ButtonViolet';
 import Alert from '../components/Alert';
 
+import { TokenContext } from '../context/TokenContext';
+import Cookies from 'js-cookie';
+
 const schema = yup.object({
   email: yup.string().email("Correo inválido").required("Campo requerido"),
   password: yup.string().required("Campo requerido")
-
 })
 
 function Login() {
+
+  const { setToken } = useContext(TokenContext)
+
+  const root = import.meta.env.VITE_API_URL_ROOT
+
   const [loading, setLoading] = useState(false)
   const [errorInput, setErrorInput] = useState(false)
 
@@ -25,31 +32,30 @@ function Login() {
   //Data from form
   const onSubmit = async data => {
     setLoading(true)
-    const res = await fetch('http://127.0.0.1:8000/login/', {
+    const res = await fetch(root + '/login/', {
       method: 'POST', body: new URLSearchParams({
         username: data.email,
         password: data.password,
       }), headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
+    const resJson = await res.json()
     if (res.status == 200) {
       setErrorInput(false)
-      console.log(await res.json())
+      setToken(await resJson.access_token)
+      Cookies.set('token', await resJson.access_token)
+      navigate("/routines")
     } else if (res.status == 404 || res.status == 400) {
       setErrorInput(true)
-      console.log(errorInput)
     } else {
       console.log("error")
     }
-
     setLoading(false)
-
-
   }
 
   return (
     <div className=' w-screen h-screen flex justify-center items-center sm:bg-violet'>
 
-      <div className="w-80 h-auto sm:bg-white sm:rounded-md sm:w-[28rem] sm:py-4">
+      <div className="w-80 h-auto sm:bg-white sm:rounded-md sm:w-[28rem] sm:py-4 ">
 
         {/*TITLE */}
         <h1 className="text-[2.5rem] font-bold mb-20 sm:text-center">
@@ -87,8 +93,6 @@ function Login() {
         </div>
       </div>
     </div>
-
-
   )
 }
 

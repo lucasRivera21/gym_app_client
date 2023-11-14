@@ -19,6 +19,7 @@ const schema = yup.object({
 })
 
 function Register() {
+    const root = import.meta.env.VITE_API_URL_ROOT
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
 
     const [loading, setLoading] = useState(false)
@@ -36,10 +37,8 @@ function Register() {
         delete data.weight
         delete data.magnitude
 
-
-        const userRes = await fetch('http://127.0.0.1:8000/users/', { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } })
+        const userRes = await fetch(root + '/users/', { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } })
         const res = await userRes.json()
-
 
         if (userRes.status == 201) {
             setError(false)
@@ -49,7 +48,7 @@ function Register() {
         }
 
         if (res.id) {
-            await fetch(`http://127.0.0.1:8000/weights/${res.id}`, { method: 'POST', body: JSON.stringify(userWeight), headers: { 'Content-Type': 'application/json' } })
+            await fetch(root + `/weights/${res.id}`, { method: 'POST', body: JSON.stringify(userWeight), headers: { 'Content-Type': 'application/json' } })
             setLoading(false)
             setError(false)
             navigate("/login")
@@ -58,7 +57,7 @@ function Register() {
 
     return (
         <div className='h-screen w-full flex items-center justify-center p-2 sm:bg-violet'>
-            <div className=' h-auto sm:bg-white sm:py-5 sm:rounded-md sm:w-4/5 max-w-2xl sm:px-6'>
+            <div className=' h-auto sm:bg-white sm:py-5 sm:rounded-md sm:w-4/5 max-w-2xl sm:px-6 '>
                 <h1 className="text-[2.5rem] font-bold mb-7 sm:text-center">Crea una Cuenta</h1>
 
                 <form className='grid grid-cols-2 sm:grid-cols-4 sm:gap-x-5  max-sm:max-w-xs p-2' onSubmit={handleSubmit(onSubmit)}>
@@ -91,7 +90,7 @@ function Register() {
 
                     {/*TERMS AND CONDITIONS */}
                     <div className='col-span-full'>
-                        <p className='text-sm font-normal text-gray-500 sm:text-center'>Al registrarte aceptas los <a className='underline cursor-pointer'>Términos y Condiciones</a> de uso</p>
+                        <p className='text-sm font-normal text-gray-500 sm:text-center '>Al registrarte aceptas los <a className='underline cursor-pointer'>Términos y Condiciones</a> de uso</p>
                     </div>
 
                     {/*SEND BUTTON */}
